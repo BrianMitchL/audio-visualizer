@@ -8,12 +8,9 @@ export function BrowserCheck({ children }: BrowserCheckProps) {
   const errors = useMemo(() => {
     const missingApis: string[] = [];
 
-    /*if (!window.BroadcastChannel) {
-      missingApis.push("BroadcastChannel");
+    if (!navigator?.mediaDevices?.getUserMedia) {
+      missingApis.push("navigator.mediaDevices.getUserMedia");
     }
-    if (!window.AudioContext) {
-      missingApis.push("AudioContext");
-    }*/
 
     return missingApis;
   }, []);
