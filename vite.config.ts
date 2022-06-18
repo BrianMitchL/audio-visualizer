@@ -11,6 +11,7 @@ export default defineConfig({
       input: {
         control: resolve(__dirname, "control/index.html"),
         visualizer: resolve(__dirname, "visualizer/index.html"),
+        main: resolve(__dirname, "index.html"),
       },
     },
   },
