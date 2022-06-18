@@ -9,8 +9,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        control: resolve(__dirname, "src/control/index.html"),
-        visualizer: resolve(__dirname, "src/visualizer/index.html"),
+        control: resolve(__dirname, "control/index.html"),
+        visualizer: resolve(__dirname, "visualizer/index.html"),
       },
     },
   },
