@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useBroadcastChannel } from "../common/useBroadcastChannel";
-import { Audio } from "./Audio";
 import { useRegisterView } from "../common/control-channel/useRegisterView";
 import { ControlMessages, View } from "../common/control-channel/messages";
+import { AudioPicker } from "./AudioPicker";
+import { ErrorBoundary } from "../common/ErrorBoundary";
 
 export function Control() {
   const controlChannel = useBroadcastChannel("control");
@@ -54,6 +55,7 @@ export function Control() {
       <p>
         <code>{id}</code>
       </p>
+      <h2>Active Views</h2>
       <ul>
         {views.map((view) => (
           <li key={view.id}>
@@ -61,7 +63,9 @@ export function Control() {
           </li>
         ))}
       </ul>
-      <Audio />
+      <ErrorBoundary>
+        <AudioPicker />
+      </ErrorBoundary>
     </div>
   );
 }
