@@ -1,27 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-
-const WIDTH = 400;
-const HEIGHT = 266;
+import { useBroadcastChannel } from "../common/useBroadcastChannel";
 
 export function Control() {
   const audioCtxRef = useRef<AudioContext>();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const intervalRef = useRef<number>();
+  const audioChannel = useBroadcastChannel("audio");
 
   const [error, setError] = useState<Error | null>(null);
-
-  const animationFrameRef = useRef<number>();
-
-  function clear() {
-    if (typeof animationFrameRef.current === "number") {
-      cancelAnimationFrame(animationFrameRef.current);
-    }
-
-    if (canvasRef.current) {
-      const { width, height } = canvasRef.current;
-      const canvasCtx = canvasRef.current.getContext("2d")!;
-      canvasCtx.clearRect(0, 0, width, height);
-    }
-  }
 
   useEffect(() => {
     navigator.mediaDevices
@@ -34,52 +19,26 @@ export function Control() {
           maxDecibels: -10,
           smoothingTimeConstant: 0.85,
         });
+        analyzer.fftSize = 32;
+        const bufferLength = analyzer.frequencyBinCount;
         const source = audioContext.createMediaStreamSource(stream);
         source.connect(analyzer, 0);
 
-        if (canvasRef.current) {
-          const { width, height } = canvasRef.current;
-          const canvasCtx = canvasRef.current.getContext("2d")!;
+        intervalRef.current = window.setInterval(() => {
+          if (!audioChannel.current) return;
 
-          analyzer.fftSize = 64;
-          const bufferLength = analyzer.frequencyBinCount;
           const data = new Uint8Array(bufferLength);
-          canvasCtx.clearRect(0, 0, width, height);
-
-          function draw() {
-            animationFrameRef.current = requestAnimationFrame(draw);
-            analyzer.getByteFrequencyData(data);
-
-            canvasCtx.fillStyle = "rgb(240, 240, 240)";
-            canvasCtx.fillRect(0, 0, width, height);
-
-            const barWidth = (width / bufferLength) * 2.5;
-            let barHeight;
-            let x = 0;
-
-            for (let i = 0; i < bufferLength; i++) {
-              barHeight = data[i];
-
-              canvasCtx.fillStyle = `rgb(${barHeight + 100},50,50)`;
-              canvasCtx.fillRect(
-                x,
-                HEIGHT - barHeight / 2,
-                barWidth,
-                barHeight / 2
-              );
-
-              x += barWidth + 1;
-            }
-          }
-
-          draw();
-        }
+          analyzer.getByteFrequencyData(data);
+          audioChannel.current.postMessage(data);
+        }, 16);
       })
       .catch((err: Error) => {
         setError(err);
       });
 
-    return clear;
+    return () => {
+      clearInterval(intervalRef.current);
+    };
   }, []);
 
   if (error) {
@@ -93,14 +52,13 @@ export function Control() {
       <h1>Control</h1>
       <button
         onClick={() => {
-          clear();
+          clearInterval(intervalRef.current);
           audioCtxRef.current?.close();
         }}
         style={{ display: "block" }}
       >
         Stop
       </button>
-      <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} />
     </div>
   );
 }
