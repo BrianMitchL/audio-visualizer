@@ -27,17 +27,19 @@ export function Visualizer() {
 
           const barWidth = width / bufferLength;
           let barHeight;
+          let canvasBarHeight;
           let x = 0;
 
           for (let i = 0; i < bufferLength; i++) {
             barHeight = event.data[i];
+            canvasBarHeight = HEIGHT * (barHeight / 255);
 
             canvasCtx.fillStyle = `rgb(${barHeight + 100},50,50)`;
             canvasCtx.fillRect(
               x,
-              HEIGHT - barHeight / 2,
+              HEIGHT - canvasBarHeight,
               barWidth,
-              barHeight / 2
+              canvasBarHeight
             );
 
             x += barWidth + 1;

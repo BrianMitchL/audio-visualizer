@@ -31,7 +31,7 @@ export function Audio({ deviceId }: AudioProps) {
       const analyzer = new window.AnalyserNode(audioContext, {
         minDecibels: -90,
         maxDecibels: -10,
-        smoothingTimeConstant: 0.85,
+        smoothingTimeConstant: 0.5,
       });
       analyzer.fftSize = 32;
       const source = audioContext.createMediaStreamSource(mediaStream);
