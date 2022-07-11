@@ -5,12 +5,13 @@ import { useRegisterView } from "../common/control-channel/useRegisterView";
 import { ControlMessages, View } from "../common/control-channel/messages";
 
 export function Control() {
-  const audioChannel = useBroadcastChannel("control");
+  const controlChannel = useBroadcastChannel("control");
   const id = useRegisterView("control");
   const [views, setViews] = useState<View[]>([]);
 
   useEffect(() => {
-    if (!audioChannel.current) return;
+    const channel = controlChannel.current;
+    if (!channel) return;
 
     const onMessage = (event: MessageEvent<ControlMessages>) => {
       setViews((prevState) => {
@@ -40,14 +41,12 @@ export function Control() {
         }
       });
     };
-    audioChannel.current.addEventListener("message", onMessage);
+    channel.addEventListener("message", onMessage);
 
     return () => {
-      if (!audioChannel.current) return;
-
-      audioChannel.current.removeEventListener("message", onMessage);
+      channel.removeEventListener("message", onMessage);
     };
-  }, []);
+  }, [controlChannel]);
 
   return (
     <div>

@@ -48,7 +48,7 @@ export function Audio() {
     return () => {
       clearInterval(intervalRef.current);
     };
-  }, [analyzer]);
+  }, [analyzer, audioChannel]);
 
   if (error) {
     return (

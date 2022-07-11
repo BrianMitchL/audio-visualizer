@@ -57,7 +57,7 @@ export function useRegisterView(type: ViewType) {
       channel.removeEventListener("message", onMessage);
       channel.postMessage(unregister);
     };
-  }, [id, type]);
+  }, [audioChannel, id, type]);
 
   return id;
 }

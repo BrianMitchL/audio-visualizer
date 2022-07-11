@@ -11,7 +11,8 @@ export function Visualizer() {
   const audioChannel = useBroadcastChannel("audio");
 
   useEffect(() => {
-    if (!audioChannel.current) return;
+    const channel = audioChannel.current;
+    if (!channel) return;
 
     const onMessage = (event: MessageEvent<Uint8Array>) => {
       const bufferLength = event.data.length;
@@ -47,14 +48,12 @@ export function Visualizer() {
     const onMessageError = (event: MessageEvent) => {
       console.error(event);
     };
-    audioChannel.current.addEventListener("message", onMessage);
-    audioChannel.current.addEventListener("messageerror", onMessageError);
+    channel.addEventListener("message", onMessage);
+    channel.addEventListener("messageerror", onMessageError);
 
     return () => {
-      if (!audioChannel.current) return;
-
-      audioChannel.current.removeEventListener("message", onMessage);
-      audioChannel.current.removeEventListener("messageerror", onMessageError);
+      channel.removeEventListener("message", onMessage);
+      channel.removeEventListener("messageerror", onMessageError);
     };
   }, [audioChannel]);
 
