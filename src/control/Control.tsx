@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useBroadcastChannel } from "../common/useBroadcastChannel";
 
 export function Control() {
-  const audioCtxRef = useRef<AudioContext>();
-  const intervalRef = useRef<number>();
+  const [analyzer, setAnalyzer] = useState<AnalyserNode | null>(null);
+  const intervalRef = useRef<NodeJS.Timer>();
   const audioChannel = useBroadcastChannel("audio");
 
   const [error, setError] = useState<Error | null>(null);
@@ -13,33 +13,42 @@ export function Control() {
       .getUserMedia({ audio: true })
       .then((stream) => {
         const audioContext = new window.AudioContext();
-        audioCtxRef.current = audioContext;
         const analyzer = new window.AnalyserNode(audioContext, {
           minDecibels: -90,
           maxDecibels: -10,
           smoothingTimeConstant: 0.85,
         });
         analyzer.fftSize = 32;
-        const bufferLength = analyzer.frequencyBinCount;
         const source = audioContext.createMediaStreamSource(stream);
         source.connect(analyzer, 0);
 
-        intervalRef.current = window.setInterval(() => {
-          if (!audioChannel.current) return;
-
-          const data = new Uint8Array(bufferLength);
-          analyzer.getByteFrequencyData(data);
-          audioChannel.current.postMessage(data);
-        }, 16);
+        setAnalyzer(analyzer);
       })
       .catch((err: Error) => {
         setError(err);
       });
 
     return () => {
-      clearInterval(intervalRef.current);
+      setAnalyzer(null);
     };
   }, []);
+
+  useEffect(() => {
+    if (!analyzer) return;
+
+    const bufferLength = analyzer.frequencyBinCount;
+    intervalRef.current = setInterval(() => {
+      if (!audioChannel.current) return;
+
+      const data = new Uint8Array(bufferLength);
+      analyzer.getByteFrequencyData(data);
+      audioChannel.current.postMessage(data);
+    }, 16);
+
+    return () => {
+      clearInterval(intervalRef.current);
+    };
+  }, [analyzer]);
 
   if (error) {
     return (
@@ -53,7 +62,6 @@ export function Control() {
       <button
         onClick={() => {
           clearInterval(intervalRef.current);
-          audioCtxRef.current?.close();
         }}
         style={{ display: "block" }}
       >
