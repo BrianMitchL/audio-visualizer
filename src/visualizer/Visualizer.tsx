@@ -17,26 +17,29 @@ export function Visualizer() {
       if (canvasRef.current) {
         const { width, height } = canvasRef.current;
         const canvasCtx = canvasRef.current.getContext("2d")!;
-        canvasCtx.fillStyle = "rgb(240, 240, 240)";
-        canvasCtx.fillRect(0, 0, width, height);
 
-        const barWidth = width / bufferLength;
-        let barHeight;
-        let x = 0;
+        requestAnimationFrame(() => {
+          canvasCtx.fillStyle = "rgb(240, 240, 240)";
+          canvasCtx.fillRect(0, 0, width, height);
 
-        for (let i = 0; i < bufferLength; i++) {
-          barHeight = event.data[i];
+          const barWidth = width / bufferLength;
+          let barHeight;
+          let x = 0;
 
-          canvasCtx.fillStyle = `rgb(${barHeight + 100},50,50)`;
-          canvasCtx.fillRect(
-            x,
-            HEIGHT - barHeight / 2,
-            barWidth,
-            barHeight / 2
-          );
+          for (let i = 0; i < bufferLength; i++) {
+            barHeight = event.data[i];
 
-          x += barWidth + 1;
-        }
+            canvasCtx.fillStyle = `rgb(${barHeight + 100},50,50)`;
+            canvasCtx.fillRect(
+              x,
+              HEIGHT - barHeight / 2,
+              barWidth,
+              barHeight / 2
+            );
+
+            x += barWidth + 1;
+          }
+        });
       }
     };
     const onMessageError = (event: MessageEvent) => {
