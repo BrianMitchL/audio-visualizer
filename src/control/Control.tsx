@@ -1,72 +1,68 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useBroadcastChannel } from "../common/useBroadcastChannel";
+import { Audio } from "./Audio";
+import { useRegisterView } from "../common/control-channel/useRegisterView";
+import { ControlMessages, View } from "../common/control-channel/messages";
 
 export function Control() {
-  const [analyzer, setAnalyzer] = useState<AnalyserNode | null>(null);
-  const intervalRef = useRef<NodeJS.Timer>();
-  const audioChannel = useBroadcastChannel("audio");
-
-  const [error, setError] = useState<Error | null>(null);
+  const audioChannel = useBroadcastChannel("control");
+  const id = useRegisterView("control");
+  const [views, setViews] = useState<View[]>([]);
 
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
-      .then((stream) => {
-        const audioContext = new window.AudioContext();
-        const analyzer = new window.AnalyserNode(audioContext, {
-          minDecibels: -90,
-          maxDecibels: -10,
-          smoothingTimeConstant: 0.85,
-        });
-        analyzer.fftSize = 32;
-        const source = audioContext.createMediaStreamSource(stream);
-        source.connect(analyzer, 0);
+    if (!audioChannel.current) return;
 
-        setAnalyzer(analyzer);
-      })
-      .catch((err: Error) => {
-        setError(err);
+    const onMessage = (event: MessageEvent<ControlMessages>) => {
+      setViews((prevState) => {
+        const message = event.data;
+        switch (message.name) {
+          case "register": {
+            return prevState.concat([message.data]);
+          }
+          case "unregister": {
+            return prevState.filter((view) => view.id !== message.data.id);
+          }
+          case "ping": {
+            const exists = prevState.find(
+              (view) => view.id === message.data.id
+            );
+
+            if (!exists) {
+              return prevState.concat([message.data]);
+            }
+            return prevState.map((view) =>
+              view.id === message.data.id ? message.data : view
+            );
+          }
+          default: {
+            return prevState;
+          }
+        }
       });
+    };
+    audioChannel.current.addEventListener("message", onMessage);
 
     return () => {
-      setAnalyzer(null);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!analyzer) return;
-
-    const bufferLength = analyzer.frequencyBinCount;
-    intervalRef.current = setInterval(() => {
       if (!audioChannel.current) return;
 
-      const data = new Uint8Array(bufferLength);
-      analyzer.getByteFrequencyData(data);
-      audioChannel.current.postMessage(data);
-    }, 16);
-
-    return () => {
-      clearInterval(intervalRef.current);
+      audioChannel.current.removeEventListener("message", onMessage);
     };
-  }, [analyzer]);
-
-  if (error) {
-    return (
-      <p>{error?.message ?? "There was a problem getting the audio stream"}</p>
-    );
-  }
+  }, []);
 
   return (
     <div>
       <h1>Control</h1>
-      <button
-        onClick={() => {
-          clearInterval(intervalRef.current);
-        }}
-        style={{ display: "block" }}
-      >
-        Stop
-      </button>
+      <p>
+        <code>{id}</code>
+      </p>
+      <ul>
+        {views.map((view) => (
+          <li key={view.id}>
+            {view.type} - {view.id}
+          </li>
+        ))}
+      </ul>
+      <Audio />
     </div>
   );
 }

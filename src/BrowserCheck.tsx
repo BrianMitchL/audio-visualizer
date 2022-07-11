@@ -12,6 +12,14 @@ export function BrowserCheck({ children }: BrowserCheckProps) {
       missingApis.push("navigator.mediaDevices.getUserMedia");
     }
 
+    if (!window.crypto?.randomUUID) {
+      missingApis.push("window.crypto.randomUUID");
+    }
+
+    if (!window.BroadcastChannel) {
+      missingApis.push("window.BroadcastChannel");
+    }
+
     return missingApis;
   }, []);
 

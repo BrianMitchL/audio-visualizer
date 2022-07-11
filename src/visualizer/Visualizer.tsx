@@ -1,11 +1,13 @@
 import { useEffect, useRef } from "react";
 import { useBroadcastChannel } from "../common/useBroadcastChannel";
+import { useRegisterView } from "../common/control-channel/useRegisterView";
 
 const WIDTH = 400;
 const HEIGHT = 266;
 
 export function Visualizer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const id = useRegisterView("visualizer");
   const audioChannel = useBroadcastChannel("audio");
 
   useEffect(() => {
@@ -59,6 +61,9 @@ export function Visualizer() {
   return (
     <div>
       <h1>Visualizer</h1>
+      <p>
+        <code>{id}</code>
+      </p>
       <p>Some libraries that might be fun to build some visualizations.</p>
       <ul>
         <li>

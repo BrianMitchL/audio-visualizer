@@ -4,12 +4,7 @@ export function useBroadcastChannel(name: string) {
   const broadcastChannelRef = useRef<BroadcastChannel>();
 
   useEffect(() => {
-    const channel = new window.BroadcastChannel(name);
-    broadcastChannelRef.current = channel;
-
-    return () => {
-      channel.close();
-    };
+    broadcastChannelRef.current = new window.BroadcastChannel(name);
   }, [name]);
 
   return broadcastChannelRef;
