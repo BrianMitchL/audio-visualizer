@@ -58,7 +58,7 @@ export function Audio({ deviceId }: AudioProps) {
       const data = new Uint8Array(bufferLength);
       analyzer.getByteFrequencyData(data);
       audioChannel.current.postMessage(data);
-    }, 16);
+    }, 5);
 
     return () => {
       clearInterval(intervalRef.current);
