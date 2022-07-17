@@ -19,10 +19,26 @@ export function AudioPicker() {
     enumerateDevices();
   }, []);
 
+  useEffect(() => {
+    async function getUserMedia() {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
+      setSelectedDeviceId(mediaStream.id);
+    }
+    if (!selectedDeviceId) {
+      getUserMedia();
+    }
+  }, [selectedDeviceId]);
+
   return (
     <div>
       <h2>Audio Input Devices</h2>
-      <p>Select an input device.</p>
+      <p>
+        Select an input device. If device names aren't showing up, please allow
+        microphone/audio access in your browser, and mark it to remember your
+        decision or always allow, and then reload the page.
+      </p>
       <ul>
         {devices.map((mediaDeviceInfo) => (
           <li key={mediaDeviceInfo.deviceId}>
@@ -30,7 +46,8 @@ export function AudioPicker() {
               onClick={() => setSelectedDeviceId(mediaDeviceInfo.deviceId)}
               aria-pressed={mediaDeviceInfo.deviceId === selectedDeviceId}
             >
-              {mediaDeviceInfo.label}
+              {mediaDeviceInfo.label ||
+                `Unknown device ${mediaDeviceInfo.deviceId}`.trim()}
             </button>
           </li>
         ))}
