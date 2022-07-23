@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useBroadcastChannel } from "../common/useBroadcastChannel";
 import { useRegisterView } from "../common/control-channel/useRegisterView";
+import { useTheme } from "../common/useTheme";
 
 const WIDTH = 400;
 const HEIGHT = 266;
@@ -10,6 +11,7 @@ export function Visualizer() {
   const id = useRegisterView("visualizer");
   const audioChannel = useBroadcastChannel("audio");
   const bufferRef = useRef<Uint8Array>();
+  const { background1 } = useTheme();
 
   useEffect(() => {
     const channel = audioChannel.current;
@@ -31,13 +33,14 @@ export function Visualizer() {
   }, [audioChannel]);
 
   useEffect(() => {
+    let frame: number | undefined = undefined;
     function draw() {
       if (canvasRef.current && bufferRef.current) {
         const bufferLength = bufferRef.current.length;
 
         const { width, height } = canvasRef.current;
         const canvasCtx = canvasRef.current.getContext("2d")!;
-        canvasCtx.fillStyle = "rgb(240, 240, 240)";
+        canvasCtx.fillStyle = background1;
         canvasCtx.fillRect(0, 0, width, height);
 
         const barWidth = width / bufferLength;
@@ -60,10 +63,16 @@ export function Visualizer() {
           x += barWidth + 1;
         }
       }
-      requestAnimationFrame(draw);
+      frame = requestAnimationFrame(draw);
     }
     draw();
-  }, []);
+
+    return () => {
+      if (typeof frame !== "undefined") {
+        cancelAnimationFrame(frame);
+      }
+    };
+  }, [background1]);
 
   return (
     <div>
