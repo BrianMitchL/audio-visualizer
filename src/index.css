@@ -575,3 +575,10 @@ img {
 em {
   color: var(--accent-2);
 }
+
+.alert {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--accent-2);
+  color: var(--accent-text);
+}

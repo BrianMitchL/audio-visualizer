@@ -56,6 +56,12 @@ export function Control() {
         <code>{id}</code>
       </p>
       <h2>Active Views</h2>
+      {views.filter((view) => view.type === "control").length > 1 ? (
+        <p role="alert" className="alert">
+          <strong>Warning</strong>, using more than one control at a time is not
+          supported.
+        </p>
+      ) : null}
       <ul>
         {views.map((view) => (
           <li key={view.id}>
