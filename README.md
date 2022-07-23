@@ -16,4 +16,4 @@ device names.
 
 Install Node 16+., run `npm install` to install dependencies, and `npm run dev`
 to serve a local application. The app runs from the "audio-visualizer" path,
-go to `http://localhost:5173/audio=visualizer/` to open it.
+go to `http://localhost:5173/audio-visualizer/` to open it.
