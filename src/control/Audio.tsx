@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useBroadcastChannel } from "../common/useBroadcastChannel";
 
 interface MediaInfo {
@@ -11,7 +11,6 @@ interface AudioProps {
 
 export function Audio({ deviceId }: AudioProps) {
   const [analyzer, setAnalyzer] = useState<AnalyserNode | null>(null);
-  const intervalRef = useRef<NodeJS.Timer>();
   const audioChannel = useBroadcastChannel("audio");
 
   const [mediaInfo, setMediaInfo] = useState<MediaInfo | null>(null);
@@ -52,7 +51,7 @@ export function Audio({ deviceId }: AudioProps) {
     if (!analyzer) return;
 
     const bufferLength = analyzer.frequencyBinCount;
-    intervalRef.current = setInterval(() => {
+    const interval = setInterval(() => {
       if (!audioChannel.current) return;
 
       const data = new Uint8Array(bufferLength);
@@ -61,7 +60,7 @@ export function Audio({ deviceId }: AudioProps) {
     }, 5);
 
     return () => {
-      clearInterval(intervalRef.current);
+      clearInterval(interval);
     };
   }, [analyzer, audioChannel]);
 
@@ -72,14 +71,6 @@ export function Audio({ deviceId }: AudioProps) {
           Playing from audio source <code>{mediaInfo.name}</code>.
         </p>
       ) : null}
-      <button
-        onClick={() => {
-          clearInterval(intervalRef.current);
-        }}
-        style={{ display: "block" }}
-      >
-        Stop Interval
-      </button>
     </div>
   );
 }
