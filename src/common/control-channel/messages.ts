@@ -19,4 +19,16 @@ export interface PingView {
   data: View;
 }
 
-export type ControlMessages = RegisterView | UnregisterView | PingView;
+export interface SetVisualizer {
+  name: "set-visualizer";
+  data: {
+    viewId: string;
+    visualizerFileName: string;
+  };
+}
+
+export type ControlMessages =
+  | RegisterView
+  | UnregisterView
+  | PingView
+  | SetVisualizer;

@@ -5,13 +5,13 @@ import { useAudioBuffer } from "../../common/useAudioBuffer";
 const WIDTH = 400;
 const HEIGHT = 266;
 
-export function BasicFrequency() {
+export default function BasicFrequencyGreen() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bufferRef = useAudioBuffer();
   const { background1 } = useTheme();
 
   useEffect(() => {
-    let frame: number | undefined = undefined;
+    let frame: number;
     function draw() {
       if (canvasRef.current && bufferRef.current) {
         const bufferLength = bufferRef.current.length;
@@ -30,7 +30,7 @@ export function BasicFrequency() {
           barHeight = bufferRef.current[i];
           canvasBarHeight = HEIGHT * (barHeight / 255);
 
-          canvasCtx.fillStyle = `rgb(${barHeight + 100},50,50)`;
+          canvasCtx.fillStyle = `rgb(50,${barHeight + 100},50)`;
           canvasCtx.fillRect(
             x,
             HEIGHT - canvasBarHeight,
@@ -46,9 +46,7 @@ export function BasicFrequency() {
     draw();
 
     return () => {
-      if (typeof frame !== "undefined") {
-        cancelAnimationFrame(frame);
-      }
+      cancelAnimationFrame(frame);
     };
   }, [background1, bufferRef]);
 

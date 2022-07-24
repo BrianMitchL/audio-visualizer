@@ -59,5 +59,9 @@ export function useRegisterView(type: ViewType) {
     };
   }, [audioChannel, id, type]);
 
+  useEffect(() => {
+    document.title = `${type[0].toUpperCase() + type.substring(1)} - ${id}`;
+  }, [id, type]);
+
   return id;
 }

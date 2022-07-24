@@ -4,10 +4,12 @@ import { useRegisterView } from "../common/control-channel/useRegisterView";
 import { ControlMessages, View } from "../common/control-channel/messages";
 import { AudioPicker } from "./AudioPicker";
 import { ErrorBoundary } from "../common/ErrorBoundary";
+import { VisualizerControl } from "./VisualizerControl";
+import classes from "./Control.module.css";
 
 export function Control() {
   const controlChannel = useBroadcastChannel("control");
-  const id = useRegisterView("control");
+  useRegisterView("control");
   const [views, setViews] = useState<View[]>([]);
 
   useEffect(() => {
@@ -51,27 +53,33 @@ export function Control() {
 
   return (
     <div>
-      <h1>Control</h1>
-      <p>
-        <code>{id}</code>
-      </p>
-      <h2>Active Views</h2>
       {views.filter((view) => view.type === "control").length > 1 ? (
-        <p role="alert" className="alert">
+        <p role="alert" className={classes.alert}>
           <strong>Warning</strong>, using more than one control at a time is not
           supported.
+          {import.meta.env.DEV
+            ? " Reload the page to clear stale control views due to hot module reloading in development mode."
+            : null}
         </p>
       ) : null}
-      <ul>
-        {views.map((view) => (
-          <li key={view.id}>
-            {view.type} - {view.id}
-          </li>
-        ))}
-      </ul>
+      <a
+        href="../visualizer/"
+        target="_blank"
+        rel="noreferrer noopener"
+        className={classes["new-visualizer-window"]}
+      >
+        Open New Visualizer
+      </a>
+
       <ErrorBoundary>
         <AudioPicker />
       </ErrorBoundary>
+
+      {views
+        .filter((view) => view.type === "visualizer")
+        .map((view) => (
+          <VisualizerControl key={view.id} id={view.id} />
+        ))}
     </div>
   );
 }
