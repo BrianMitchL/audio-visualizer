@@ -13,6 +13,18 @@ You should grant access (and remember decision) to the site for
 microphone/audio use, and reload the control page in order to see the list of
 device names.
 
+## Using High Quality Audio/Music Input
+
+By default, the only input devices shown are microphones, and external inputs.
+Apps like Loopback or Soundflower may work to route an output device into a
+virtual input that can be used in a browser.
+
+The site works best in Firefox or Chromium-based browsers. Safari should work,
+but it seems to have problems with the Loopback Pass-Thru virtual device on
+macOS, which is how I'm able to test with directly routing audio from a music
+player into the site. Other audio routing applications or directly using an
+input devices may work better in Safari.
+
 ## Local Development
 
 Install Node 16+, run `npm install` to install dependencies, and `npm run dev`
