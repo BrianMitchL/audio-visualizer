@@ -7,4 +7,16 @@
 
 .new-visualizer-window {
   display: block;
+  margin-block-end: 0.5rem;
+}
+
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.inline-form > * {
+  margin: 0;
 }

@@ -1,9 +1,0 @@
-.visualizer-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.visualizer-form > * {
-  margin: 0;
-}

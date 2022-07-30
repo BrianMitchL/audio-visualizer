@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useBroadcastChannel } from "../common/useBroadcastChannel";
 import { useRegisterView } from "../common/control-channel/useRegisterView";
 import { ControlMessages, View } from "../common/control-channel/messages";
@@ -7,10 +7,17 @@ import { ErrorBoundary } from "../common/ErrorBoundary";
 import { VisualizerControl } from "./VisualizerControl";
 import classes from "./Control.module.css";
 
+const powersOf2: number[] = [];
+for (let i = 5; i < 16; i += 1) {
+  powersOf2.push(2 ** i);
+}
+
 export function Control() {
   const controlChannel = useBroadcastChannel("control");
   useRegisterView("control");
   const [views, setViews] = useState<View[]>([]);
+  const [fftSize, setFftSize] = useState(32);
+  const fftSelectId = useId();
 
   useEffect(() => {
     const channel = controlChannel.current;
@@ -72,8 +79,29 @@ export function Control() {
       </a>
 
       <ErrorBoundary>
-        <AudioPicker />
+        <AudioPicker fftSize={fftSize} />
       </ErrorBoundary>
+
+      <form
+        className={classes["inline-form"]}
+        onSubmit={(event) => {
+          event.preventDefault();
+          const newFftSize = new FormData(event.currentTarget).get("fftSize");
+          if (typeof newFftSize === "string") {
+            setFftSize(Number(newFftSize));
+          }
+        }}
+      >
+        <label htmlFor={fftSelectId}>Frequency Bins</label>
+        <select id={fftSelectId} name="fftSize">
+          {powersOf2.map((value) => (
+            <option key={value} value={value}>
+              {(value / 2).toLocaleString()}
+            </option>
+          ))}
+        </select>
+        <button type="submit">Set Frequency Bins</button>
+      </form>
 
       {views
         .filter((view) => view.type === "visualizer")

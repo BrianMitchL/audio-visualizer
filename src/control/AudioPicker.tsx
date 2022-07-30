@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { Audio } from "./Audio";
 
-export function AudioPicker() {
+interface AudioPickerProps {
+  fftSize: number;
+}
+
+export function AudioPicker({ fftSize }: AudioPickerProps) {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedDeviceId, setSelectedDeviceId] =
     useState<ConstrainDOMString | null>(null);
@@ -32,8 +36,8 @@ export function AudioPicker() {
   }, [selectedDeviceId]);
 
   return (
-    <div>
-      <h2>Audio Input Devices</h2>
+    <details>
+      <summary>Audio Input Devices</summary>
       <p>
         Select an input device. If device names aren't showing up, please allow
         microphone/audio access in your browser, and mark it to remember your
@@ -52,7 +56,9 @@ export function AudioPicker() {
           </li>
         ))}
       </ul>
-      {selectedDeviceId ? <Audio deviceId={selectedDeviceId} /> : null}
-    </div>
+      {selectedDeviceId ? (
+        <Audio deviceId={selectedDeviceId} fftSize={fftSize} />
+      ) : null}
+    </details>
   );
 }

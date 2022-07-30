@@ -2,7 +2,7 @@ import { useId } from "react";
 import { useBroadcastChannel } from "../common/useBroadcastChannel";
 import { SetVisualizer } from "../common/control-channel/messages";
 import { visualizersArray } from "../visualizer/visualizers";
-import classes from "./VisualizerControl.module.css";
+import classes from "./Control.module.css";
 
 interface Props {
   id: string;
@@ -17,7 +17,7 @@ export function VisualizerControl({ id }: Props) {
       <h2>Visualizer - {id}</h2>
 
       <form
-        className={classes["visualizer-form"]}
+        className={classes["inline-form"]}
         onSubmit={(event) => {
           event.preventDefault();
           const vis = new FormData(event.currentTarget).get("visualizer");

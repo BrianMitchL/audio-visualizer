@@ -7,9 +7,10 @@ interface MediaInfo {
 
 interface AudioProps {
   deviceId: ConstrainDOMString;
+  fftSize: number;
 }
 
-export function Audio({ deviceId }: AudioProps) {
+export function Audio({ deviceId, fftSize }: AudioProps) {
   const [analyzer, setAnalyzer] = useState<AnalyserNode | null>(null);
   const audioChannel = useBroadcastChannel("audio");
 
@@ -32,7 +33,7 @@ export function Audio({ deviceId }: AudioProps) {
         maxDecibels: -10,
         smoothingTimeConstant: 0.85,
       });
-      analyzer.fftSize = 32;
+      analyzer.fftSize = fftSize;
       const source = audioContext.createMediaStreamSource(mediaStream);
       source.connect(analyzer, 0);
 
@@ -45,7 +46,7 @@ export function Audio({ deviceId }: AudioProps) {
       setAnalyzer(null);
       setMediaInfo(null);
     };
-  }, [deviceId]);
+  }, [deviceId, fftSize]);
 
   useEffect(() => {
     if (!analyzer) return;
