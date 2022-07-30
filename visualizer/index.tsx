@@ -4,6 +4,7 @@ import { BrowserCheck } from "../src/BrowserCheck";
 import { Visualizer } from "../src/visualizer/Visualizer";
 import { ErrorBoundary } from "../src/common/ErrorBoundary";
 import "../src/index.css";
+import "./visualizer.css";
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>

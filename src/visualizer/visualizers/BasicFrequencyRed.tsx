@@ -1,12 +1,11 @@
 import { useEffect, useRef } from "react";
 import { useTheme } from "../../common/useTheme";
 import { useAudioBuffer } from "../../common/useAudioBuffer";
-
-const WIDTH = 400;
-const HEIGHT = 266;
+import { useResizeCanvas } from "../useResizeCanvas";
 
 export default function BasicFrequencyRed() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  useResizeCanvas(canvasRef);
   const bufferRef = useAudioBuffer();
   const { background1 } = useTheme();
 
@@ -28,12 +27,12 @@ export default function BasicFrequencyRed() {
 
         for (let i = 0; i < bufferLength; i++) {
           barHeight = bufferRef.current[i];
-          canvasBarHeight = HEIGHT * (barHeight / 255);
+          canvasBarHeight = height * (barHeight / 255);
 
           canvasCtx.fillStyle = `rgb(${barHeight + 100},50,50)`;
           canvasCtx.fillRect(
             x,
-            HEIGHT - canvasBarHeight,
+            height - canvasBarHeight,
             barWidth,
             canvasBarHeight
           );
@@ -50,5 +49,5 @@ export default function BasicFrequencyRed() {
     };
   }, [background1, bufferRef]);
 
-  return <canvas ref={canvasRef} width={WIDTH} height={HEIGHT} />;
+  return <canvas ref={canvasRef} />;
 }
