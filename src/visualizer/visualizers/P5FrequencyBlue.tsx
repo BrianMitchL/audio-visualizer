@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "../../common/useTheme";
 import { useAudioBuffer } from "../../common/useAudioBuffer";
-import p5 from "p5";
+import P5 from "p5";
 
 export default function P5FrequencyBlue() {
   const containerRef = useRef<HTMLDivElement>(null);
   const bufferRef = useAudioBuffer();
   const { background1 } = useTheme();
-  const [sketch, setSketch] = useState<p5 | undefined>(undefined);
+  const [sketch, setSketch] = useState<P5 | undefined>(undefined);
 
   useEffect(() => {
-    const Sketch = (p: p5) => {
+    const Sketch = (p: P5) => {
       p.setup = () => {
         p.createCanvas(p.windowWidth, p.windowHeight);
       };
@@ -45,7 +45,7 @@ export default function P5FrequencyBlue() {
     };
 
     if (!sketch) {
-      let inst = new p5(Sketch, containerRef.current as HTMLElement);
+      let inst = new P5(Sketch, containerRef.current as HTMLElement);
 
       setSketch(inst);
     }
