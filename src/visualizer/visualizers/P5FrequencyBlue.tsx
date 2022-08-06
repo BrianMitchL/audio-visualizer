@@ -3,7 +3,7 @@ import { useTheme } from "../../common/useTheme";
 import { useAudioBuffer } from "../../common/useAudioBuffer";
 import p5 from "p5";
 
-export default function BasicFrequencyRed() {
+export default function P5FrequencyBlue() {
   const containerRef = useRef<HTMLDivElement>(null);
   const bufferRef = useAudioBuffer();
   const { background1 } = useTheme();
