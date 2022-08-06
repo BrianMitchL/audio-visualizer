@@ -9,41 +9,41 @@ export default function BasicFrequencyRed() {
   const { background1 } = useTheme();
   const [sketch, setSketch] = useState<p5 | undefined>(undefined);
 
-  const Sketch = (p: p5) => {
-    p.setup = () => {
-      p.createCanvas(p.windowWidth, p.windowHeight);
-    };
+  useEffect(() => {
+    const Sketch = (p: p5) => {
+      p.setup = () => {
+        p.createCanvas(p.windowWidth, p.windowHeight);
+      };
 
-    p.windowResized = () => {
-      p.resizeCanvas(p.windowWidth, p.windowHeight);
-    };
+      p.windowResized = () => {
+        p.resizeCanvas(p.windowWidth, p.windowHeight);
+      };
 
-    p.draw = () => {
-      p.background(background1);
-
-      if (containerRef.current && bufferRef.current) {
-        const bufferLength = bufferRef.current.length;
-
+      p.draw = () => {
         p.background(background1);
 
-        const barWidth = p.width / bufferLength;
-        let barHeight;
-        let canvasBarHeight;
-        let x = 0;
+        if (containerRef.current && bufferRef.current) {
+          const bufferLength = bufferRef.current.length;
 
-        for (let i = 0; i < bufferLength; i++) {
-          barHeight = bufferRef.current[i];
-          canvasBarHeight = p.height * (barHeight / 255);
-          p.fill(p.color(50, 50, barHeight + 100));
-          p.rect(x, p.height - canvasBarHeight, barWidth, canvasBarHeight);
+          p.background(background1);
 
-          x += barWidth + 1;
+          const barWidth = p.width / bufferLength;
+          let barHeight;
+          let canvasBarHeight;
+          let x = 0;
+
+          for (let i = 0; i < bufferLength; i++) {
+            barHeight = bufferRef.current[i];
+            canvasBarHeight = p.height * (barHeight / 255);
+            p.fill(p.color(50, 50, barHeight + 100));
+            p.rect(x, p.height - canvasBarHeight, barWidth, canvasBarHeight);
+
+            x += barWidth + 1;
+          }
         }
-      }
+      };
     };
-  };
 
-  useEffect(() => {
     if (!sketch) {
       let inst = new p5(Sketch, containerRef.current as HTMLElement);
 
@@ -55,7 +55,7 @@ export default function BasicFrequencyRed() {
         sketch.remove();
       }
     };
-  }, [background1, bufferRef, sketch, Sketch]);
+  }, [background1, bufferRef, sketch]);
 
   return <div ref={containerRef} />;
 }
