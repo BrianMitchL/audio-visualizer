@@ -1,9 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { useTheme } from "../../common/useTheme";
+import { useEffect, useRef } from "react";
 import { useAudioBuffer } from "../../common/useAudioBuffer";
 import P5 from "p5";
 import ActorSystem from "./optical/ActorSystem";
-import { buffer } from "stream/consumers";
 
 const FRAME_RATE = 60;
 const ACTOR_COUNT = 500;
@@ -12,10 +10,10 @@ const ACTOR_SPEED = 3;
 export default function Optical() {
   const containerRef = useRef<HTMLDivElement>(null);
   const bufferRef = useAudioBuffer();
-  const { background1 } = useTheme();
-  const [sketch, setSketch] = useState<P5 | undefined>(undefined);
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
     const Sketch = (p5: P5) => {
       let actorSystem: ActorSystem;
       p5.setup = () => {
@@ -45,18 +43,13 @@ export default function Optical() {
         actorSystem.display(p5 as P5.Graphics);
       };
     };
-    if (!sketch) {
-      let inst = new P5(Sketch, containerRef.current as HTMLElement);
 
-      setSketch(inst);
-    }
+    const sketch = new P5(Sketch, containerRef.current);
 
     return () => {
-      if (sketch) {
-        sketch.remove();
-      }
+      sketch.remove();
     };
-  }, [background1, bufferRef, sketch]);
+  }, [bufferRef]);
 
   return <div ref={containerRef} />;
 }
