@@ -18,12 +18,18 @@ export default function Optical() {
       let actorSystem: ActorSystem;
       p5.setup = () => {
         p5.frameRate(FRAME_RATE);
-        p5.createCanvas(p5.windowWidth, p5.windowHeight);
+        p5.createCanvas(
+          p5.windowWidth * window.devicePixelRatio,
+          p5.windowHeight * window.devicePixelRatio
+        );
         actorSystem = new ActorSystem(p5, ACTOR_COUNT, ACTOR_SPEED);
       };
 
       p5.windowResized = () => {
-        p5.resizeCanvas(p5.windowWidth, p5.windowHeight);
+        p5.resizeCanvas(
+          p5.windowWidth * window.devicePixelRatio,
+          p5.windowHeight * window.devicePixelRatio
+        );
       };
 
       p5.draw = () => {

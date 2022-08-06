@@ -13,11 +13,17 @@ export default function P5FrequencyBlue() {
 
     const Sketch = (p: P5) => {
       p.setup = () => {
-        p.createCanvas(p.windowWidth, p.windowHeight);
+        p.createCanvas(
+          p.windowWidth * window.devicePixelRatio,
+          p.windowHeight * window.devicePixelRatio
+        );
       };
 
       p.windowResized = () => {
-        p.resizeCanvas(p.windowWidth, p.windowHeight);
+        p.resizeCanvas(
+          p.windowWidth * window.devicePixelRatio,
+          p.windowHeight * window.devicePixelRatio
+        );
       };
 
       p.draw = () => {
