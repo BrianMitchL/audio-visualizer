@@ -15,6 +15,7 @@
     "postinstall": "simple-git-hooks"
   },
   "dependencies": {
+    "p5": "^1.4.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^3.1.4"
@@ -23,6 +24,7 @@
     "@types/node": "^16.11.46",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
+    "@types/p5": "^1.4.2",
     "@vitejs/plugin-react": "^2.0.0",
     "eslint": "^8.20.0",
     "eslint-config-react-app": "^7.0.1",
